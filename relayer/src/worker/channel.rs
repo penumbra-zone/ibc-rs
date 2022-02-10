@@ -51,8 +51,6 @@ pub fn spawn_channel_worker<ChainA: ChainHandle, ChainB: ChainHandle>(
                         height: current_height,
                         new_block: _,
                     } => {
-                        debug!("starts processing block event at {:#?}", current_height);
-
                         let height = current_height
                             .decrement()
                             .map_err(|e| TaskError::Fatal(RunError::ics02(e)))?;

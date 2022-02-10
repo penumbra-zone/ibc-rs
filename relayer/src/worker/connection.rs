@@ -53,7 +53,6 @@ pub fn spawn_connection_worker<ChainA: ChainHandle, ChainB: ChainHandle>(
                         height: current_height,
                         new_block: _,
                     } => {
-                        debug!("starts processing block event at {}", current_height);
 
                         let height = current_height
                             .decrement()
