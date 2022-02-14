@@ -836,11 +836,9 @@ impl CosmosSdkChain {
             .map(|res| res.response.hash.to_string())
             .join(", ");
 
-        info!(
-            id = %self.id(),
-            "wait_for_block_commits: waiting for commit of tx hashes(s) {}",
-            hashes
-        );
+        let _span = span!(Level::INFO, "wait_for_block_commits", id = %self.id()).entered();
+
+        info!("waiting for commit of tx hashes(s) {}", hashes);
 
         // Wait a little bit initially
         thread::sleep(Duration::from_millis(200));
@@ -851,8 +849,7 @@ impl CosmosSdkChain {
             |index| {
                 if all_tx_results_found(&tx_sync_results) {
                     trace!(
-                        id = %self.id(),
-                        "wait_for_block_commits: retrieved {} tx results after {} tries ({}ms)",
+                        "retrieved {} tx results after {} tries ({}ms)",
                         tx_sync_results.len(),
                         index,
                         start.elapsed().as_millis()
@@ -1875,6 +1872,7 @@ impl ChainEndpoint for CosmosSdkChain {
                     Ok(vec![])
                 } else {
                     let tx = response.txs.remove(0);
+                    //trace!("tx_search retrieved: {:#?}", tx);
                     Ok(all_ibc_events_from_tx_search_response(self.id(), tx))
                 }
             }
@@ -2239,12 +2237,17 @@ fn all_ibc_events_from_tx_search_response(chain_id: &ChainId, response: ResultTx
         ))];
     }
 
+    let _span =
+        span!(Level::TRACE, "all_ibc_events_from_tx_search_response", height = %height).entered();
     let mut result = vec![];
     for event in deliver_tx_result.events {
+        trace!("processing event from tx response: {:#?}", event);
         if let Some(ibc_ev) = from_tx_response_event(height, &event) {
+            trace!("got IBC event: {:#?}", ibc_ev);
             result.push(ibc_ev);
         }
     }
+    trace!("done");
     result
 }
 
