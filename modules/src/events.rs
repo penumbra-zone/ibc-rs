@@ -9,13 +9,13 @@ use serde_derive::{Deserialize, Serialize};
 use tendermint::abci::Event as AbciEvent;
 
 use crate::core::ics02_client::error as client_error;
-use crate::core::ics02_client::events as ClientEvents;
+use crate::core::ics02_client::events as client_events;
 use crate::core::ics02_client::events::NewBlock;
 use crate::core::ics02_client::height::HeightError;
-use crate::core::ics03_connection::events as ConnectionEvents;
+use crate::core::ics03_connection::events as connection_events;
 use crate::core::ics03_connection::events::Attributes as ConnectionAttributes;
 use crate::core::ics04_channel::error as channel_error;
-use crate::core::ics04_channel::events as ChannelEvents;
+use crate::core::ics04_channel::events as channel_events;
 use crate::core::ics04_channel::events::Attributes as ChannelAttributes;
 use crate::core::ics04_channel::packet::Packet;
 use crate::core::ics24_host::error::ValidationError;
@@ -210,29 +210,29 @@ impl FromStr for IbcEventType {
 pub enum IbcEvent {
     NewBlock(NewBlock),
 
-    CreateClient(ClientEvents::CreateClient),
-    UpdateClient(ClientEvents::UpdateClient),
-    UpgradeClient(ClientEvents::UpgradeClient),
-    ClientMisbehaviour(ClientEvents::ClientMisbehaviour),
+    CreateClient(client_events::CreateClient),
+    UpdateClient(client_events::UpdateClient),
+    UpgradeClient(client_events::UpgradeClient),
+    ClientMisbehaviour(client_events::ClientMisbehaviour),
 
-    OpenInitConnection(ConnectionEvents::OpenInit),
-    OpenTryConnection(ConnectionEvents::OpenTry),
-    OpenAckConnection(ConnectionEvents::OpenAck),
-    OpenConfirmConnection(ConnectionEvents::OpenConfirm),
+    OpenInitConnection(connection_events::OpenInit),
+    OpenTryConnection(connection_events::OpenTry),
+    OpenAckConnection(connection_events::OpenAck),
+    OpenConfirmConnection(connection_events::OpenConfirm),
 
-    OpenInitChannel(ChannelEvents::OpenInit),
-    OpenTryChannel(ChannelEvents::OpenTry),
-    OpenAckChannel(ChannelEvents::OpenAck),
-    OpenConfirmChannel(ChannelEvents::OpenConfirm),
-    CloseInitChannel(ChannelEvents::CloseInit),
-    CloseConfirmChannel(ChannelEvents::CloseConfirm),
+    OpenInitChannel(channel_events::OpenInit),
+    OpenTryChannel(channel_events::OpenTry),
+    OpenAckChannel(channel_events::OpenAck),
+    OpenConfirmChannel(channel_events::OpenConfirm),
+    CloseInitChannel(channel_events::CloseInit),
+    CloseConfirmChannel(channel_events::CloseConfirm),
 
-    SendPacket(ChannelEvents::SendPacket),
-    ReceivePacket(ChannelEvents::ReceivePacket),
-    WriteAcknowledgement(ChannelEvents::WriteAcknowledgement),
-    AcknowledgePacket(ChannelEvents::AcknowledgePacket),
-    TimeoutPacket(ChannelEvents::TimeoutPacket),
-    TimeoutOnClosePacket(ChannelEvents::TimeoutOnClosePacket),
+    SendPacket(channel_events::SendPacket),
+    ReceivePacket(channel_events::ReceivePacket),
+    WriteAcknowledgement(channel_events::WriteAcknowledgement),
+    AcknowledgePacket(channel_events::AcknowledgePacket),
+    TimeoutPacket(channel_events::TimeoutPacket),
+    TimeoutOnClosePacket(channel_events::TimeoutOnClosePacket),
 
     Empty(String),      // Special event, signifying empty response
     ChainError(String), // Special event, signifying an error on CheckTx or DeliverTx
@@ -322,13 +322,13 @@ impl TryFrom<IbcEvent> for AbciEvent {
 // This is tendermint specific
 pub fn from_tx_response_event(height: Height, event: &tendermint::abci::Event) -> Option<IbcEvent> {
     // Return the first hit we find
-    if let Some(mut client_res) = ClientEvents::try_from_tx(event) {
+    if let Some(mut client_res) = client_events::try_from_tx(event) {
         client_res.set_height(height);
         Some(client_res)
-    } else if let Some(mut conn_res) = ConnectionEvents::try_from_tx(event) {
+    } else if let Some(mut conn_res) = connection_events::try_from_tx(event) {
         conn_res.set_height(height);
         Some(conn_res)
-    } else if let Some(mut chan_res) = ChannelEvents::try_from_tx(event) {
+    } else if let Some(mut chan_res) = channel_events::try_from_tx(event) {
         chan_res.set_height(height);
         Some(chan_res)
     } else {
