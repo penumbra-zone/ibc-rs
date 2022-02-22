@@ -19,6 +19,7 @@ use crate::core::ics04_channel::events as channel_events;
 use crate::core::ics04_channel::events::Attributes as ChannelAttributes;
 use crate::core::ics04_channel::packet::Packet;
 use crate::core::ics24_host::error::ValidationError;
+use crate::cosmos::gov::events as gov_events;
 use crate::timestamp::ParseTimestampError;
 use crate::Height;
 
@@ -113,6 +114,8 @@ const WRITE_ACK_EVENT: &str = "write_acknowledgement";
 const ACK_PACKET_EVENT: &str = "acknowledge_packet";
 const TIMEOUT_EVENT: &str = "timeout_packet";
 const TIMEOUT_ON_CLOSE_EVENT: &str = "timeout_packet_on_close";
+/// Cosmos SDK governance event types
+const SUBMIT_PROPOSAL_EVENT: &str = "submit_proposal";
 
 /// Events types
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -138,6 +141,7 @@ pub enum IbcEventType {
     AckPacket,
     Timeout,
     TimeoutOnClose,
+    SubmitProposal,
     Empty,
     ChainError,
 }
@@ -166,6 +170,7 @@ impl IbcEventType {
             IbcEventType::AckPacket => ACK_PACKET_EVENT,
             IbcEventType::Timeout => TIMEOUT_EVENT,
             IbcEventType::TimeoutOnClose => TIMEOUT_ON_CLOSE_EVENT,
+            IbcEventType::SubmitProposal => SUBMIT_PROPOSAL_EVENT,
             IbcEventType::Empty => EMPTY_EVENT,
             IbcEventType::ChainError => CHAIN_ERROR_EVENT,
         }
@@ -234,6 +239,8 @@ pub enum IbcEvent {
     TimeoutPacket(channel_events::TimeoutPacket),
     TimeoutOnClosePacket(channel_events::TimeoutOnClosePacket),
 
+    SubmitProposal(gov_events::SubmitProposal),
+
     Empty(String),      // Special event, signifying empty response
     ChainError(String), // Special event, signifying an error on CheckTx or DeliverTx
 }
@@ -285,6 +292,8 @@ impl fmt::Display for IbcEvent {
             IbcEvent::TimeoutPacket(ev) => write!(f, "TimeoutPacketEv({})", ev),
             IbcEvent::TimeoutOnClosePacket(ev) => write!(f, "TimeoutOnClosePacketEv({})", ev),
 
+            IbcEvent::SubmitProposal(ev) => write!(f, "SubmitProposalEv({})", ev),
+
             IbcEvent::Empty(ev) => write!(f, "EmptyEv({})", ev),
             IbcEvent::ChainError(ev) => write!(f, "ChainErrorEv({})", ev),
         }
@@ -331,6 +340,9 @@ pub fn from_tx_response_event(height: Height, event: &tendermint::abci::Event) -
     } else if let Some(mut chan_res) = channel_events::try_from_tx(event) {
         chan_res.set_height(height);
         Some(chan_res)
+    } else if let Some(mut gov_res) = gov_events::try_from_tx(event) {
+        gov_res.set_height(height);
+        Some(gov_res)
     } else {
         None
     }
@@ -418,6 +430,7 @@ impl IbcEvent {
             IbcEvent::AcknowledgePacket(_) => IbcEventType::AckPacket,
             IbcEvent::TimeoutPacket(_) => IbcEventType::Timeout,
             IbcEvent::TimeoutOnClosePacket(_) => IbcEventType::TimeoutOnClose,
+            IbcEvent::SubmitProposal(_) => IbcEventType::SubmitProposal,
             IbcEvent::Empty(_) => IbcEventType::Empty,
             IbcEvent::ChainError(_) => IbcEventType::ChainError,
         }
