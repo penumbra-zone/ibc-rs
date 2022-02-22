@@ -1872,7 +1872,6 @@ impl ChainEndpoint for CosmosSdkChain {
                     Ok(vec![])
                 } else {
                     let tx = response.txs.remove(0);
-                    //trace!("tx_search retrieved: {:#?}", tx);
                     Ok(all_ibc_events_from_tx_search_response(self.id(), tx))
                 }
             }
