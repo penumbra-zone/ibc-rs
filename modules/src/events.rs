@@ -213,6 +213,8 @@ impl FromStr for IbcEventType {
 /// Events created by the IBC component of a chain, destined for a relayer.
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum IbcEvent {
+    Empty, // Special event, signifying empty response
+
     NewBlock(NewBlock),
 
     CreateClient(client_events::CreateClient),
@@ -241,13 +243,12 @@ pub enum IbcEvent {
 
     SubmitProposal(gov_events::SubmitProposal),
 
-    Empty(String),      // Special event, signifying empty response
     ChainError(String), // Special event, signifying an error on CheckTx or DeliverTx
 }
 
 impl Default for IbcEvent {
     fn default() -> Self {
-        Self::Empty("".to_string())
+        Self::Empty
     }
 }
 
@@ -294,7 +295,7 @@ impl fmt::Display for IbcEvent {
 
             IbcEvent::SubmitProposal(ev) => write!(f, "SubmitProposal({})", ev),
 
-            IbcEvent::Empty(ev) => write!(f, "Empty({})", ev),
+            IbcEvent::Empty => write!(f, "Empty"),
             IbcEvent::ChainError(ev) => write!(f, "ChainError({})", ev),
         }
     }
@@ -431,7 +432,7 @@ impl IbcEvent {
             IbcEvent::TimeoutPacket(_) => IbcEventType::Timeout,
             IbcEvent::TimeoutOnClosePacket(_) => IbcEventType::TimeoutOnClose,
             IbcEvent::SubmitProposal(_) => IbcEventType::SubmitProposal,
-            IbcEvent::Empty(_) => IbcEventType::Empty,
+            IbcEvent::Empty => IbcEventType::Empty,
             IbcEvent::ChainError(_) => IbcEventType::ChainError,
         }
     }

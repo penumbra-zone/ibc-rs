@@ -30,7 +30,7 @@ impl EventFilter {
             EventFilter::Tx => {
                 !(matches!(
                     event,
-                    IbcEvent::NewBlock(_) | IbcEvent::Empty(_) | IbcEvent::ChainError(_)
+                    IbcEvent::NewBlock(_) | IbcEvent::Empty | IbcEvent::ChainError(_)
                 ))
             }
         }
