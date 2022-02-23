@@ -6,6 +6,7 @@ use serde_derive::{Deserialize, Serialize};
 use tendermint::abci::tag::Tag;
 use tendermint::abci::Event as AbciEvent;
 
+use crate::core::ics02_client::height::Height;
 use crate::events::{IbcEvent, IbcEventType};
 
 pub fn try_from_tx(event: &AbciEvent) -> Option<IbcEvent> {
@@ -20,6 +21,7 @@ pub fn try_from_tx(event: &AbciEvent) -> Option<IbcEvent> {
 /// Data of a "submit_proposal" event carrying a "proposal_id" tag.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SubmitProposal {
+    pub height: Height,
     pub proposal_id: u64,
 }
 
@@ -41,6 +43,13 @@ impl SubmitProposal {
                 continue;
             }
         }
-        proposal_id.map(|proposal_id| Self { proposal_id })
+        proposal_id.map(|proposal_id| Self {
+            proposal_id,
+            height: Default::default(),
+        })
+    }
+
+    pub fn set_height(&mut self, height: Height) {
+        self.height = height;
     }
 }

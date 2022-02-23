@@ -203,6 +203,7 @@ impl FromStr for IbcEventType {
             ACK_PACKET_EVENT => Ok(IbcEventType::AckPacket),
             TIMEOUT_EVENT => Ok(IbcEventType::Timeout),
             TIMEOUT_ON_CLOSE_EVENT => Ok(IbcEventType::TimeoutOnClose),
+            SUBMIT_PROPOSAL_EVENT => Ok(IbcEventType::SubmitProposal),
             EMPTY_EVENT => Ok(IbcEventType::Empty),
             CHAIN_ERROR_EVENT => Ok(IbcEventType::ChainError),
             _ => Err(Error::incorrect_event_type(s.to_string())),
@@ -404,6 +405,7 @@ impl IbcEvent {
             IbcEvent::WriteAcknowledgement(ev) => ev.set_height(height),
             IbcEvent::AcknowledgePacket(ev) => ev.set_height(height),
             IbcEvent::TimeoutPacket(ev) => ev.set_height(height),
+            IbcEvent::SubmitProposal(ev) => ev.set_height(height),
             _ => unimplemented!(),
         }
     }
