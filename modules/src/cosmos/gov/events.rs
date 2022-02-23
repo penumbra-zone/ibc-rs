@@ -49,6 +49,10 @@ impl SubmitProposal {
         })
     }
 
+    pub fn height(&self) -> Height {
+        self.height
+    }
+
     pub fn set_height(&mut self, height: Height) {
         self.height = height;
     }
