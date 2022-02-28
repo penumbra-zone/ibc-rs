@@ -17,7 +17,7 @@ use ibc::{
 
 use crate::{
     chain::{handle::ChainHandle, HealthCheck},
-    config::{ChainConfig, Config},
+    config::{ChainConfig, Config, SharedConfig},
     event::{
         self,
         monitor::{Error as EventError, ErrorDetail as EventErrorDetail, EventBatch},
@@ -84,7 +84,7 @@ pub struct SupervisorOptions {
    value is dropped.
 */
 pub fn spawn_supervisor(
-    config: Arc<RwLock<Config>>,
+    config: SharedConfig,
     registry: SharedRegistry<impl ChainHandle>,
     rest_rx: Option<rest::Receiver>,
     options: SupervisorOptions,
@@ -382,7 +382,7 @@ fn collect_event<F>(
     }
 }
 
-fn collect_events(
+pub fn collect_events(
     config: &Config,
     workers: &WorkerMap,
     src_chain: &impl ChainHandle,
@@ -411,18 +411,16 @@ fn collect_events(
             | IbcEvent::OpenTryConnection(..)
             | IbcEvent::OpenAckConnection(..) => {
                 collect_event(&mut collected, event, mode.connections.enabled, || {
-                    event
-                        .connection_attributes()
-                        .map(|attr| Object::connection_from_conn_open_events(attr, src_chain).ok())
-                        .flatten()
+                    event.connection_attributes().and_then(|attr| {
+                        Object::connection_from_conn_open_events(attr, src_chain).ok()
+                    })
                 });
             }
             IbcEvent::OpenInitChannel(..) | IbcEvent::OpenTryChannel(..) => {
                 collect_event(&mut collected, event, mode.channels.enabled, || {
-                    event
-                        .channel_attributes()
-                        .map(|attr| Object::channel_from_chan_open_events(attr, src_chain).ok())
-                        .flatten()
+                    event.channel_attributes().and_then(|attr| {
+                        Object::channel_from_chan_open_events(attr, src_chain).ok()
+                    })
                 });
             }
             IbcEvent::OpenAckChannel(ref open_ack) => {
@@ -840,7 +838,7 @@ fn update_config<Chain: ChainHandle>(
     }
 }
 
-/// Describes the result of [`collect_events`](Supervisor::collect_events).
+/// Describes the result of [`collect_events`].
 #[derive(Clone, Debug)]
 pub struct CollectedEvents {
     /// The height at which these events were emitted from the chain.
