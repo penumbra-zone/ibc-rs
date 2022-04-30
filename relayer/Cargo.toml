@@ -72,25 +72,27 @@ features = ["serde"]
 version = "0.4.0"
 features = ["num-bigint", "serde"]
 
+
 [dependencies.tendermint]
-version = "=0.23.6"
-features = ["secp256k1"]
+version = "0.24.0-pre.1"
+default-features = false
 
 [dependencies.tendermint-rpc]
-version = "=0.23.6"
+version = "0.24.0-pre.1"
+default-features = false
 features = ["http-client", "websocket-client"]
 
-[dependencies.tendermint-light-client]
-version = "=0.23.6"
+[dependencies.tendermint-proto]
+version = "0.24.0-pre.1"
 default-features = false
-features = ["rpc-client", "secp256k1", "unstable"]
+
+[dependencies.tendermint-light-client]
+version = "0.24.0-pre.1"
+default-features = true
 
 [dependencies.tendermint-light-client-verifier]
-version = "=0.23.6"
+version = "0.24.0-pre.1"
 default-features = false
-
-[dependencies.tendermint-proto]
-version = "=0.23.6"
 
 [dev-dependencies]
 ibc = { version = "0.14.0", path = "../modules", features = ["mocks"] }

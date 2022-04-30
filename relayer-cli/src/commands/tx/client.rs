@@ -10,7 +10,7 @@ use ibc_proto::ibc::core::client::v1::QueryClientStatesRequest;
 use ibc_relayer::chain::handle::ChainHandle;
 use ibc_relayer::config::Config;
 use ibc_relayer::foreign_client::{CreateOptions, ForeignClient};
-use tendermint_light_client_verifier::types::TrustThreshold;
+use tendermint_light_client::types::TrustThreshold;
 
 use crate::application::app_config;
 use crate::cli_utils::{spawn_chain_runtime, spawn_chain_runtime_generic, ChainHandlePair};

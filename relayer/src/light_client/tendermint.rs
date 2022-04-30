@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 use tendermint_light_client::{
-    components::{self, io::AtHeight},
+    components::{self, io::AtHeight, io::ProdIo as TmProdIo},
     light_client::LightClient as TmLightClient,
     state::State as LightClientState,
     store::{memory::MemoryStore, LightStore},
@@ -38,7 +38,7 @@ use super::Verified;
 pub struct LightClient {
     chain_id: ChainId,
     peer_id: PeerId,
-    io: components::io::ProdIo,
+    io: TmProdIo,
 }
 
 impl super::LightClient<CosmosSdkChain> for LightClient {
@@ -169,7 +169,7 @@ impl LightClient {
         let rpc_client = rpc::HttpClient::new(config.rpc_addr.clone())
             .map_err(|e| Error::rpc(config.rpc_addr.clone(), e))?;
 
-        let io = components::io::ProdIo::new(peer_id, rpc_client, Some(config.rpc_timeout));
+        let io = TmProdIo::new(peer_id, rpc_client, Some(config.rpc_timeout));
 
         Ok(Self {
             chain_id: config.id.clone(),

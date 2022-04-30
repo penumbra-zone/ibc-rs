@@ -6,7 +6,8 @@ use core::str::FromStr;
 use flex_error::{define_error, TraceError};
 use prost::alloc::fmt::Formatter;
 use serde_derive::{Deserialize, Serialize};
-use tendermint::abci::Event as AbciEvent;
+use tendermint_rpc::abci::Event;
+use tendermint_rpc::abci::Event as AbciEvent;
 
 use crate::core::ics02_client::error as client_error;
 use crate::core::ics02_client::events as ClientEvents;
@@ -320,7 +321,7 @@ impl TryFrom<IbcEvent> for AbciEvent {
 }
 
 // This is tendermint specific
-pub fn from_tx_response_event(height: Height, event: &tendermint::abci::Event) -> Option<IbcEvent> {
+pub fn from_tx_response_event(height: Height, event: &Event) -> Option<IbcEvent> {
     // Return the first hit we find
     if let Some(mut client_res) = ClientEvents::try_from_tx(event) {
         client_res.set_height(height);
@@ -470,7 +471,7 @@ pub struct RawObject<'a> {
     pub height: Height,
     pub action: String,
     pub idx: usize,
-    pub events: &'a HashMap<String, Vec<String>>,
+    pub events: &'a Vec<Event>,
 }
 
 impl<'a> RawObject<'a> {
@@ -478,7 +479,7 @@ impl<'a> RawObject<'a> {
         height: Height,
         action: String,
         idx: usize,
-        events: &'a HashMap<String, Vec<String>>,
+        events: &'a Vec<Event>,
     ) -> RawObject<'a> {
         RawObject {
             height,
@@ -505,13 +506,13 @@ pub fn extract_events(
 pub fn extract_attribute(object: &RawObject<'_>, key: &str) -> Result<String, Error> {
     let value = object
         .events
-        .get(key)
-        .ok_or_else(|| Error::missing_key(key.to_string()))?[object.idx]
+        .get(object.idx)
+        .ok_or_else(|| Error::missing_key(key.to_string()))?
         .clone();
 
-    Ok(value)
+    Ok(value.type_str)
 }
 
-pub fn maybe_extract_attribute(object: &RawObject<'_>, key: &str) -> Option<String> {
-    object.events.get(key).map(|tags| tags[object.idx].clone())
+pub fn maybe_extract_attribute(object: &RawObject<'_>, _key: &str) -> Option<String> {
+    object.events.get(object.idx).map(|m| m.type_str.clone())
 }

@@ -50,12 +50,7 @@ define_error! {
 
 impl Error {
     pub fn canceled_or_generic(e: RpcError) -> Self {
-        use tendermint_rpc::error::ErrorDetail;
-
         match e.detail() {
-            ErrorDetail::Server(detail) if detail.reason.contains("subscription was cancelled") => {
-                Self::subscription_cancelled(e)
-            }
             _ => Self::rpc(e),
         }
     }

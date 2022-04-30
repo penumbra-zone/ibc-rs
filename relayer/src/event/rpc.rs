@@ -1,5 +1,5 @@
-use alloc::collections::BTreeMap as HashMap;
 use core::convert::TryFrom;
+use tendermint_rpc::abci::Event;
 
 use tendermint_rpc::{event::Event as RpcEvent, event::EventData as RpcEventData};
 
@@ -161,11 +161,12 @@ pub fn get_all_events(
                         tracing::trace!("extracted {}", chan_event);
                         if matches!(chan_event, IbcEvent::SendPacket(_)) {
                             // Should be the same as the hash of tx_result.tx?
+                            /*
                             if let Some(hash) =
                                 events.get("tx.hash").and_then(|values| values.get(0))
                             {
                                 tracing::trace!(event = "SendPacket", "tx hash: {}", hash);
-                            }
+                            }*/
                         }
                         vals.push((height, chan_event));
                     }
@@ -178,20 +179,15 @@ pub fn get_all_events(
     Ok(vals)
 }
 
-fn extract_block_events(
-    height: Height,
-    block_events: &HashMap<String, Vec<String>>,
-) -> Vec<(Height, IbcEvent)> {
+fn extract_block_events(height: Height, block_events: &Vec<Event>) -> Vec<(Height, IbcEvent)> {
     #[inline]
     fn extract_events<'a, T: TryFrom<RawObject<'a>>>(
         height: Height,
-        block_events: &'a HashMap<String, Vec<String>>,
+        block_events: &'a Vec<Event>,
         event_type: &str,
-        event_field: &str,
+        _event_field: &str,
     ) -> Vec<T> {
         block_events
-            .get(&format!("{}.{}", event_type, event_field))
-            .unwrap_or(&vec![])
             .iter()
             .enumerate()
             .filter_map(|(i, _)| {
