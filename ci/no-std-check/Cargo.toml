@@ -7,9 +7,9 @@ resolver = "2"
 [dependencies]
 ibc = { path = "../../modules", default-features = false }
 ibc-proto = { path = "../../proto", default-features = false }
-tendermint = { version = "0.23.6", default-features = false }
-tendermint-proto = { version = "0.23.6", default-features = false }
-tendermint-light-client-verifier = { version = "0.23.6", default-features = false }
+tendermint = { git = "https://github.com/penumbra-zone/tendermint-rs", branch = "penumbra-034" }
+tendermint-proto = { git = "https://github.com/penumbra-zone/tendermint-rs", branch = "penumbra-034" }
+tendermint-light-client-verifier = { git = "https://github.com/penumbra-zone/tendermint-rs", branch = "penumbra-034" }
 
 sp-core = { version = "5.0.0", default-features = false, optional = true }
 sp-io = { version = "5.0.0", default-features = false, optional = true }
@@ -18,18 +18,8 @@ sp-std = { version = "4.0.0", default-features = false, optional = true }
 
 [features]
 panic-handler = []
-use-substrate = [
-  "sp-core",
-  "sp-io",
-  "sp-runtime",
-  "sp-std",
-]
-substrate-std = [
-  "sp-core/std",
-  "sp-io/std",
-  "sp-runtime/std",
-  "sp-std/std",
-]
+use-substrate = ["sp-core", "sp-io", "sp-runtime", "sp-std"]
+substrate-std = ["sp-core/std", "sp-io/std", "sp-runtime/std", "sp-std/std"]
 
 # [patch.crates-io]
 # tendermint                        = { git = "https://github.com/informalsystems/tendermint-rs", branch = "v0.23.x" }

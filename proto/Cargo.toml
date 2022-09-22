@@ -1,16 +1,16 @@
 [package]
-name         = "ibc-proto"
-version      = "0.17.1"
-authors      = ["Informal Systems <hello@informal.systems>"]
-edition      = "2021"
-license      = "Apache-2.0"
-repository   = "https://github.com/informalsystems/ibc-rs/tree/master/proto"
-readme       = "README.md"
-categories   = ["cryptography::cryptocurrencies", "encoding", "no-std"]
-keywords     = ["blockchain", "cosmos", "tendermint", "ibc", "proto"]
-exclude      = ["definitions"]
+name = "ibc-proto"
+version = "0.17.1"
+authors = ["Informal Systems <hello@informal.systems>"]
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/informalsystems/ibc-rs/tree/master/proto"
+readme = "README.md"
+categories = ["cryptography::cryptocurrencies", "encoding", "no-std"]
+keywords = ["blockchain", "cosmos", "tendermint", "ibc", "proto"]
+exclude = ["definitions"]
 rust-version = "1.60"
-description  = """
+description = """
     ibc-proto provides Cosmos SDK & IBC Protocol Buffers definitions
 """
 
@@ -23,20 +23,20 @@ doctest = false
 all-features = true
 
 [dependencies]
-prost       = { version = "0.9", default-features = false }
-prost-types = { version = "0.9", default-features = false }
-bytes       = { version = "1.1", default-features = false }
-tonic       = { version = "0.6", optional = true, default-features = false }
-serde       = { version = "1.0", default-features = false }
-schemars    = { version = "0.8", optional = true }
-base64      = { version = "0.13", default-features = false, features = ["alloc"] }
+prost = { version = "0.11", default-features = false }
+prost-types = { version = "0.11", default-features = false }
+bytes = { version = "1.1", default-features = false }
+tonic = { version = "0.6", optional = true, default-features = false }
+serde = { version = "1.0", default-features = false }
+schemars = { version = "0.8", optional = true }
+base64 = { version = "0.13", default-features = false, features = ["alloc"] }
 
 [dependencies.tendermint-proto]
 version = "0.24.0-pre.1"
 default-features = false
 
 [features]
-default     = ["std", "client"]
-std         = []
-client      = ["std", "tonic", "tonic/codegen", "tonic/transport", "tonic/prost"]
+default = ["std", "client"]
+std = []
+client = ["std", "tonic", "tonic/codegen", "tonic/transport", "tonic/prost"]
 json-schema = ["std", "schemars"]

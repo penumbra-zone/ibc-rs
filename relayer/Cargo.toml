@@ -1,14 +1,14 @@
 [package]
-name         = "ibc-relayer"
-version      = "0.14.0"
-edition      = "2021"
-license      = "Apache-2.0"
-readme       = "README.md"
-keywords     = ["blockchain", "consensus", "cosmos", "ibc", "tendermint"]
-repository   = "https://github.com/informalsystems/ibc-rs"
-authors      = ["Informal Systems <hello@informal.systems>"]
+name = "ibc-relayer"
+version = "0.14.0"
+edition = "2021"
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["blockchain", "consensus", "cosmos", "ibc", "tendermint"]
+repository = "https://github.com/informalsystems/ibc-rs"
+authors = ["Informal Systems <hello@informal.systems>"]
 rust-version = "1.60"
-description  = """
+description = """
     Implementation of an IBC Relayer in Rust, as a library
 """
 
@@ -16,13 +16,13 @@ description  = """
 all-features = true
 
 [features]
-default   = ["flex-error/std", "flex-error/eyre_tracer"]
+default = ["flex-error/std", "flex-error/eyre_tracer"]
 profiling = []
 telemetry = ["ibc-telemetry"]
 
 [dependencies]
-ibc           = { version = "0.14.0", path = "../modules" }
-ibc-proto     = { version = "0.17.1", path = "../proto" }
+ibc = { version = "0.14.0", path = "../modules" }
+ibc-proto = { version = "0.17.1", path = "../proto" }
 ibc-telemetry = { version = "0.14.0", path = "../telemetry", optional = true }
 
 subtle-encoding = "0.5"
@@ -35,21 +35,23 @@ tracing = "0.1.34"
 tokio = { version = "1.0", features = ["rt-multi-thread", "time", "sync"] }
 serde_json = { version = "1" }
 bytes = "1.1.0"
-prost = { version = "0.9" }
-prost-types = { version = "0.9" }
+prost = { version = "0.11" }
+prost-types = { version = "0.11" }
 futures = "0.3.21"
 crossbeam-channel = "0.5.4"
-k256 = { version = "0.10.4", features = ["ecdsa-core", "ecdsa", "sha256"]}
+k256 = { version = "0.10.4", features = ["ecdsa-core", "ecdsa", "sha256"] }
 hex = "0.4"
 bitcoin = { version = "=0.27", features = ["use-serde"] }
 tiny-bip39 = "0.8.0"
 hdpath = { version = "0.6.0" }
 sha2 = "0.10.2"
-tiny-keccak = { version = "2.0.2", features = ["keccak"], default-features = false }
+tiny-keccak = { version = "2.0.2", features = [
+    "keccak",
+], default-features = false }
 ripemd160 = "0.9.1"
 bech32 = "0.8.1"
 itertools = "0.10.3"
-tonic = { version = "0.6", features = ["tls", "tls-roots"] }
+tonic = { version = "0.8", features = ["tls", "tls-roots"] }
 dirs-next = "2.0.0"
 retry = { version = "1.3.1", default-features = false }
 async-stream = "0.3.3"
@@ -74,31 +76,38 @@ features = ["num-bigint", "serde"]
 
 
 [dependencies.tendermint]
-version = "0.24.0-pre.1"
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 default-features = false
 
 [dependencies.tendermint-rpc]
-version = "0.24.0-pre.1"
-default-features = false
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 features = ["http-client", "websocket-client"]
 
 [dependencies.tendermint-proto]
-version = "0.24.0-pre.1"
-default-features = false
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 
 [dependencies.tendermint-light-client]
-version = "0.24.0-pre.1"
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 default-features = true
 
 [dependencies.tendermint-light-client-verifier]
-version = "0.24.0-pre.1"
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 default-features = false
 
 [dev-dependencies]
 ibc = { version = "0.14.0", path = "../modules", features = ["mocks"] }
 serial_test = "0.6.0"
 env_logger = "0.9.0"
-tracing-subscriber = { version = "0.3.11", features = ["fmt", "env-filter", "json"] }
+tracing-subscriber = { version = "0.3.11", features = [
+    "fmt",
+    "env-filter",
+    "json",
+] }
 test-log = { version = "0.2.10", features = ["trace"] }
 
 # Needed for generating (synthetic) light blocks.
