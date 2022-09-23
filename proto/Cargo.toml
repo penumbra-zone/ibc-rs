@@ -26,14 +26,14 @@ all-features = true
 prost = { version = "0.11", default-features = false }
 prost-types = { version = "0.11", default-features = false }
 bytes = { version = "1.1", default-features = false }
-tonic = { version = "0.6", optional = true, default-features = false }
+tonic = { version = "0.8", optional = true, default-features = false }
 serde = { version = "1.0", default-features = false }
 schemars = { version = "0.8", optional = true }
 base64 = { version = "0.13", default-features = false, features = ["alloc"] }
 
 [dependencies.tendermint-proto]
-version = "0.24.0-pre.1"
-default-features = false
+git = "https://github.com/penumbra-zone/tendermint-rs"
+branch = "penumbra-034"
 
 [features]
 default = ["std", "client"]
