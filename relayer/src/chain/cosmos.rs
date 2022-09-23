@@ -908,6 +908,7 @@ impl ChainEndpoint for CosmosSdkChain {
             }
             .into_request();
 
+            #[allow(deprecated)]
             let height_param = MetadataValue::from_str(&height.revision_height.to_string())
                 .map_err(Error::invalid_metadata)?;
 
